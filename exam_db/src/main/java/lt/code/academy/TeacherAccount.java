@@ -3,9 +3,7 @@ package lt.code.academy;
 import com.mongodb.client.FindIterable;
 import lt.code.academy.data.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class TeacherAccount {
     protected final Service service;
@@ -19,17 +17,34 @@ public class TeacherAccount {
     private void printStatistic() {
         FindIterable<Exam> exams = service.getExams();
         for (Exam exam: exams) {
+            if (exam.getCount() == 0) {
+                continue;
+            }
             System.out.printf("Egzaminas \"%s\" buvo spręstas %s kartus(ų).%n",exam.getExamName(), exam.getCount());
             List<Question> questions = exam.getQuestions();
             printQuestionsStatistic(questions);
-
+            printAnswersStatistic((questions));
         }
     }
 
     private void printAnswersStatistic(List<Question> questions) {
+        Map<Integer, Integer> countAnswers = new HashMap<>();
         for (Question question: questions) {
             List<Answer> answers = question.getPossibleAnswers();
+
+            for (int i = 0; i < answers.size(); i++) {
+                int answerNumber = i + 1;
+                int answerCount = answers.get(i).getCount();
+
+                if (countAnswers.get(answerNumber) == null) {
+                    countAnswers.put(answerNumber, answerCount);
+                    continue;
+                }
+
+                countAnswers.put(answerNumber, countAnswers.get(answerNumber) + answerCount);
+            }
         }
+        countAnswers.forEach((k, v) -> System.out.printf("Atsakymo variantas \"%s\" buvo pasirinktas %s kartus(ų)%n", k, v));
     }
 
     private void printQuestionsStatistic(List<Question> questions) {
@@ -38,7 +53,7 @@ public class TeacherAccount {
             List<Answer> answers = question.getPossibleAnswers();
             for (Answer answer: answers) {
                 if (answer.getAnswer().equals(question.getCorrectAnswer())) {
-                    System.out.printf("Klausime \"%s\", tesingas atsakymas \"%s\", kuris buvo pasirinktas %s kartus(ų):%n",
+                    System.out.printf("Klausime \"%s\", teisingas atsakymas \"%s\", kuris buvo pasirinktas %s kartus(ų).%n",
                             question.getQuestion(), question.getCorrectAnswer(), answer.getCount());
                     correctAnswersNum += answer.getCount();
                 }

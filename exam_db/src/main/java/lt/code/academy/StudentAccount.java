@@ -45,11 +45,12 @@ public class StudentAccount extends TeacherAccount {
         for (ExamResult examResult: examResults) {
             LocalDateTime possibleTime = examResult.getDateTime().plusHours(48);
             String examName = examResult.getExamName();
-            if (examName.equals(exam.getExamName()) && LocalDateTime.now().isAfter(possibleTime)) {
-                return true;
+
+            if (examName.equals(exam.getExamName()) && LocalDateTime.now().isBefore(possibleTime)) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
 
@@ -74,6 +75,7 @@ public class StudentAccount extends TeacherAccount {
         exam.setCount(exam.getCount() + 1);
         service.updateExam(exam);
         gradeExam(correctAnswersNum, questions.size());
+
     }
 
     private void gradeExam(int points, int questionsNum) {

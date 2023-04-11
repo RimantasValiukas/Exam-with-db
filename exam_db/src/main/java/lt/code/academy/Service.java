@@ -5,10 +5,8 @@ import com.mongodb.client.*;
 import static com.mongodb.client.model.Filters.*;
 
 import static com.mongodb.client.model.Updates.*;
-import lt.code.academy.data.Exam;
-import lt.code.academy.data.ExamResult;
-import lt.code.academy.data.Question;
-import lt.code.academy.data.Student;
+
+import lt.code.academy.data.*;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -22,8 +20,6 @@ public class Service {
     private final MongoCollection<Exam> examCollection;
     private final MongoClient client;
     private final MongoDatabase database;
-
-
 
     public Service() {
         CodecRegistry registry = CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
@@ -39,6 +35,7 @@ public class Service {
     public void updateExam(Exam exam) {
         examCollection.updateOne(eq("_id", exam.getId()), new Document("$set", exam));
     }
+
     public void updateStudentResults(ObjectId id, List<ExamResult> examResults) {
         studentCollection.updateOne(eq("_id", id), set("examResults", examResults));
     }
