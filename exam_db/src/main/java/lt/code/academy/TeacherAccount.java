@@ -24,6 +24,7 @@ public class TeacherAccount {
             List<Question> questions = exam.getQuestions();
             printQuestionsStatistic(questions);
             printAnswersStatistic((questions));
+            System.out.println("----------------------------------------------");
         }
     }
 
